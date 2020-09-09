@@ -1,10 +1,28 @@
+
+**tsBNgen: A Python Library to Generate Time Series Data Based on an Arbitrary Bayesian Network Structure**
+
+[Description](#Description)
+
+[Citation](#Citaton)
+
+[Features](#Features)
+
+[Instruction](#Instruction)
+
+[License](#License)
+
+[Support](#Support)
+
+----
+
 ### **Description**
 
 #### tsBNgen is a Python package to generate time series data based on an arbitrary Bayesian Network Structures. 
 ---
 ### **Citation**
 
- #### For the correct citation please visit https://github.com/manitadayon/tsBNgen
+ #### If you find this package useful or if you use it in your research or work please consider citing it as follows:
+ To be added later on
 ----
 ### **Features**
 
@@ -34,12 +52,15 @@ pip install tsBNgen
 For more information on how to use the package please visit the following:
 
 1. Original paper 
-2. Documentation in PDF available in the github repository.
+2. Documentation in PDF available in this repository.
 
 ### **License**
 
 This software is released under the MIT liecense.
 
+### **Support**
+
+If you have any question or comment, either open a new issue for this repo or please email me at manitadayon@ucla.edu.
 
 
 

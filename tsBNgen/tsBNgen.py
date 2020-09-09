@@ -1,6 +1,6 @@
 from tsBNgen import *
 class tsBNgen:
-    def __init__(self,T,N,N_level,Mat,Node_Type,CPD,Parent,CPD2,Parent2,CPD3,Parent3,loopbacks,loopbacks2):
+    def __init__(self,T,N,N_level,Mat,Node_Type,CPD,Parent,CPD2,Parent2,loopbacks,CPD3=None,Parent3=None,loopbacks2=None,custom_time=0):
         '''
         A class to generate time series according to arbitrary dynamic Bayesian network structure.
 
@@ -32,21 +32,25 @@ class tsBNgen:
 
         Parent2 : dict
             Parents of each node for time points after the initial time point.
+        
+         loopbacks : dict
+            Determining the temporal conection between the nodes.
 
         CPD3 : dict
-            Probability distribution for the nodes (It will be used if loopback values are more than one
-            otherwise it should be set to empty).
+            Probability distribution for the nodes. Use this entry when BN_sample_gen_loopback() is called.
+                It defaults to empty.
 
         Parent3 : dict
-            Parents of each node after the initial time point (It will be
-                empty unless loopback values are more than one).
-
-        loopbacks : dict
-            Determining the temporal conection between the nodes. 
+            Parents of each node after the initial time point.  It is default to empty. 
+                Use this entry when BN_sample_gen_loopback() is called 
 
         loopbacks2 : dict
-            Determining the temporal conection between nodes (It will empty unless
-                    at least one of the nodes has a loopback value greater than one).
+            Determining the temporal conection between nodes. It is default to empty.
+                Use this entry when BN_sample_gen_loopback() is called
+        
+        custom_time: int
+            Determines at which time point, the new BN is used. The default is 0, which means
+            the program learns it automatically from the loopbacks entry. 
             
         Methods
         ------------
@@ -90,15 +94,15 @@ class tsBNgen:
             Generate samples for all the nodes after the initial time.
         
         BN_data_gen()
-            It uses Initial_sample for initial time(t=0) and BN_sample for time point t=1 up to time
-            t=T (length of time series).
+            Use this function under the following conditions:
+                custom_time variable is not specified and the value of the loopback for all the variables is at most 1
 
         BN_sample_loopback()
             Generate samples for all the nodes for time t=k.
         
         BN_sample_gen_loopback()
-            It uses Initial_sample for initial time(t=0) and BN_sample for time point t=1 up to time
-                t=maximum value of the loopback, then it will use BN_sample_loopback for t=k up to t=T.
+            custom_time is not specified and you want the loopback value for some nodes to be at most 2.
+                custom_time is specified and it is at least equal to the maximum loopback value of the loopbacks2.
         
         '''
         self.T=T
@@ -111,12 +115,18 @@ class tsBNgen:
         self.N_level=N_level
         self.CPD2=CPD2
         self.Parent2=Parent2
-        self.flag=0  
+        self.flag=0
+        if CPD3 is None:
+            CPD3={}  
         self.CPD3=CPD3
+        if Parent3 is None:
+            Parent3={}
         self.Parent3=Parent3
         self.loopbacks=loopbacks 
+        if loopbacks2 is None:
+            loopbacks2={}
         self.loopbacks2=loopbacks2 
-
+        self.custom_time=custom_time
 
     def BFS(self,Row):
         '''
@@ -476,8 +486,8 @@ class tsBNgen:
 
         Notes
         ------------
-        Use this function to generate samples if the loopback values are at most one.
-            Loopback=1 means that a node at time t is connected to the node at t-1.
+        Use this function to generate samples if the loopback values are at most one. 
+        Loopback=1 means that a node at time t is connected to the node at t-1.
 
         Raises
         ------------
@@ -596,8 +606,7 @@ class tsBNgen:
         
     def BN_data_gen(self):
         '''
-        It uses Initial_sample for initial time(t=0) and BN_sample for time point t=1 up to time
-            t=T (length of time series)
+        It uses Initial_sample for initial time(t=0) and BN_sample for time point t=1 up to time t=T (length of time series)
 
         Parameters
         -------------
@@ -606,6 +615,17 @@ class tsBNgen:
         Returns
         -------------
         None
+            None
+
+        Raises
+        ------------
+        Exception
+            Parent of a discrete node cannot be continuous
+
+        Notes
+        -------------
+        Use this function under the following conditions: custom_time variable is not specified 
+        and the value of the loopback for all the variables is at most 1
         '''
         keys = range(len(self.Node)) 
         self.BN_Nodes= dict(zip(keys, ([[] for ii in range(self.N)] for _ in keys )))
@@ -755,7 +775,7 @@ class tsBNgen:
     
     def BN_sample_gen_loopback(self):
         '''
-        Use this function if  you have a loopback value for at least one node greater than one.
+        Generate time series data for all the nodes for all time. See Notes for the more information.
 
         Parameters
         -------------
@@ -764,25 +784,42 @@ class tsBNgen:
         Returns
         -------------
         None
+
+        Raises
+        ------------
+        Exception
+            Parent of a discrete node cannot be continuous
         
         Notes
         ------------
-        This is more general form of BN_data_gen that supports only two different BN structures or
-            loopback value of maximum one for all the nodes.
+        This is more general form of BN_data_gen that supports only two different BN structures 
+        or loopback value of maximum one for all the nodes.
         '''
         keys = range(len(self.Node)) 
         self.BN_Nodes= dict(zip(keys, ([[] for ii in range(self.N)] for _ in keys )))
         Max_loopback=max(sum(self.loopbacks2.values(),[]))
-        
-        for ii in range(self.N):
-            self.Initial_sample()
-            for kk in range(1,Max_loopback):
-                self.BN_sample()
-            for mm in range(Max_loopback,self.T):
-                self.BN_sample_loopback()
-            for jj in range(len(self.Node)):
-                self.BN_Nodes[jj][ii]=self.Node[jj] 
-                self.Node[jj]=[]                 
+
+        if (self.custom_time == 0):
+            for ii in range(self.N):
+                self.Initial_sample()
+                for kk in range(1,Max_loopback):
+                    self.BN_sample()
+                for mm in range(Max_loopback,self.T):
+                    self.BN_sample_loopback()
+                for jj in range(len(self.Node)):
+                    self.BN_Nodes[jj][ii]=self.Node[jj] 
+                    self.Node[jj]=[]    
+        else:
+            for ii in range(self.N):
+                self.Initial_sample()
+                for kk in range(1,self.custom_time):
+                    self.BN_sample()
+                for mm in range(self.custom_time,self.T):
+                    self.BN_sample_loopback()
+                for jj in range(len(self.Node)):
+                    self.BN_Nodes[jj][ii]=self.Node[jj] 
+                    self.Node[jj]=[]
+
               
 
 

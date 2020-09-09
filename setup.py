@@ -1,4 +1,4 @@
-from distutils.core import setup
+from setuptools import setup
 
 with open("README.md", "r") as fh:
     long_description = fh.read()
@@ -13,7 +13,6 @@ setup(
     license='MIT',
     long_description=long_description,
     long_description_content_type="text/markdown",
-    
     url='https://github.com/manitadayon/tsBNgen',
     classifiers=[
         "Programming Language :: Python :: 3",

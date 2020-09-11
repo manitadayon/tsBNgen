@@ -11,8 +11,6 @@
 
 [License](#License)
 
-[Support](#Support)
-
 ----
 
 ### **Description**

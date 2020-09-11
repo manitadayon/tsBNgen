@@ -22,7 +22,14 @@
 ### **Citation**
 
  #### If you find this package useful or if you use it in your research or work please consider citing it as follows:
- To be added later on
+```
+@article{tadayon2020tsbngen,
+    title={tsBNgen: A Python Library to Generate Time Series Data from an Arbitrary Dynamic Bayesian Network Structure},
+    author={Manie Tadayon and Greg Pottie},
+    journal={arXiv preprint arXiv:2009.04595},
+    year={2020}
+}
+```
 ----
 ### **Features**
 

@@ -65,9 +65,6 @@ For more information on how to use the package please visit the following:
 
 This software is released under the MIT liecense.
 
-### **Support**
-
-If you have any question or comment, either open a new issue for this repo or please email me at manitadayon@ucla.edu.
 
 
 

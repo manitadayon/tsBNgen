@@ -1,3 +1,4 @@
+https://img.shields.io/github/license/manitadayon/tsBNgen
 
 **tsBNgen: A Python Library to Generate Time Series Data Based on an Arbitrary Bayesian Network Structure**
 

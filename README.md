@@ -63,8 +63,10 @@ pip install tsBNgen
 
 For more information on how to use the package please visit the following:
 
-1. Original paper 
-2. Documentation in PDF available in this repository.
+1. Watch my Youtube tutorial (I go over the package) 
+2. <a href="https://www.youtube.com/watch?v=RNLf6kN97JE&list=PLLFnyzDUVf87sOtUtwujo7g0nH-nl_DBY">Watch the videos</a>
+3. Original paper 
+4. Documentation in PDF available in this repository.
 
 ### **License**
 
